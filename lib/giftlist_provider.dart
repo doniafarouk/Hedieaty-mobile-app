@@ -1,42 +1,30 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class Gift {
-  String name;
-  String category;
-  double price;
-  bool isPledged;
+  final String name;
+  final String category;
+  final double price;
+  String status; // "Available", "Pledged", "Purchased"
 
   Gift({
     required this.name,
     required this.category,
     required this.price,
-    this.isPledged = false,
+    this.status = "Available",
   });
 }
 
 class GiftListProvider with ChangeNotifier {
   List<Gift> _gifts = [
-    Gift(name: 'Toy Car', category: 'Toys', price: 15.0),
-    Gift(name: 'Chocolate Box', category: 'Food', price: 10.0),
+    Gift(name: "Toy Car", category: "Toys", price: 15.99),
+    Gift(name: "Book", category: "Education", price: 9.99),
+    Gift(name: "Chocolate Box", category: "Food", price: 12.49),
   ];
 
   List<Gift> get gifts => _gifts;
 
-  void addGift(Gift gift) {
-    _gifts.add(gift);
-    notifyListeners();
-  }
-
-  void deleteGift(int index) {
-    _gifts.removeAt(index);
-    notifyListeners();
-  }
-
-  void pledgeGift(Gift gift) {
-    final giftIndex = _gifts.indexOf(gift);
-    if (giftIndex != -1) {
-      _gifts[giftIndex].isPledged = !_gifts[giftIndex].isPledged;
-      notifyListeners();
-    }
+  void updateGiftStatus(Gift gift, String newStatus) {
+    gift.status = newStatus;
+    notifyListeners(); // Notify widgets listening to this provider.
   }
 }
