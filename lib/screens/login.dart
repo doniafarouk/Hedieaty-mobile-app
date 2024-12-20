@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../auth/authService.dart';
 import 'ForgetPaswordPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,6 +13,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final FirebaseAuthService _authService = FirebaseAuthService();
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -51,6 +54,24 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
+
+  // void signIn() async {
+  //   String email = _emailController.text;
+  //   String password = _passwordController.text;
+  //
+  //   User? user = await _authService.signInWithEmailAndPassword(email, password);
+  //
+  //   if (user != null) {
+  //     print("User in");
+  //     Navigator.pushNamed(context, '/home'); // Use named routes for navigation
+  //   } else {
+  //     print("Some error happened"); // Improve error handling (see below)
+  //     // Show a SnackBar or Dialog to inform the user about the error
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Signin failed. Please try again.')),
+  //     );
+  //   }
+  // }
 
   @override
   void dispose() {

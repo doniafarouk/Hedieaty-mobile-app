@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/auth/authService.dart';
+
+import '../model/database.dart';
+import 'homepage.dart';
 
 class SignupPage extends StatefulWidget {
   final VoidCallback showLoginPage;
@@ -11,6 +15,8 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+
+  final FirebaseAuthService _authService = FirebaseAuthService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -31,25 +37,90 @@ class _SignupPageState extends State<SignupPage> {
     super.dispose();
   }
 
+  // void signup() async {
+  //   String email = _emailController.text;
+  //   String password = _passwordController.text;
+  //   String confirmPassword = _confirmPasswordController.text;
+  //
+  //   User? user = await _authService.signUpWithEmailAndPassword(email, password);
+  //
+  //   if (user != null) {
+  //     print("User is successfully created");
+  //     Navigator.pushNamed(context, '/home'); // Use named routes for navigation
+  //   } else {
+  //     print("Some error happened"); // Improve error handling (see below)
+  //     // Show a SnackBar or Dialog to inform the user about the error
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Signup failed. Please try again.')),
+  //     );
+  //   }
+  // }
+
+
+
+
   Future<void> signup() async {
     if (passwordConfirmed()) {
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
         User? user = FirebaseAuth.instance.currentUser;
+        // print('print enter display');
+        // if (user != null) {
+        //   await user.updateDisplayName(_emailController.text.trim());
+        // }
+        // await user!.reload();
         FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
         .set({
-          'username': _emailController.text.split('@')[0]//initial name in email
+          'username': _emailController.text.split('@')[0],//initial name in email
+          'email': _emailController.text.trim(),
         });
+        print('print enter local');
 
-        // Show success message or navigate to another page
+        // Save user to SQLite
+        // final userData = {
+        //   'name': _emailController.text.split('@')[0], // Extract username from email
+        //   'email': _emailController.text.trim(),       // Trim email input
+        // };
+        // // Insert the user into the 'users' table using DatabaseHelper
+        // await DatabaseHelper().insertUser(userData);
+        // print("printed local");
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Account created successfully!')),
         );
+
+        await DatabaseHelper().insertUser({
+          'name': _emailController.text.split('@')[0],
+          'email': _emailController.text.trim(),
+          // 'userId': user.uid, // Store the Firebase user ID in SQLite??
+        });
+        // int? userId = await DatabaseHelper().getUserIdByEmail(_emailController.text.trim());
+
+        print('print outer local');
+
+
+        // Show success message or navigate to another page
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Account created successfully!')),
+        // );
+        // Show success message or navigate to another page
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Account created successfully!')),
+          );
+
+          Future.delayed(Duration(seconds: 5), () {
+            // Navigate to another page after showing the snackbar
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
+          });
+        }
+
       } on FirebaseAuthException catch (e) {
         print(e.message);
         // Show error message

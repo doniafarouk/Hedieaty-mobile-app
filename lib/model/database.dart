@@ -1,277 +1,337 @@
-// // import 'package:sqflite/sqflite.dart';
-// // import 'package:path/path.dart';
-// // import 'package:path_provider/path_provider.dart';
-// // import 'dart:io';
-// //
-// // class DatabaseHelper {
-// //   static Database? _database;
-// //
-// //   // Singleton pattern to get a single instance of the database
-// //   static Future<Database> get database async {
-// //     if (_database != null) return _database!;
-// //     _database = await _initDB();
-// //     return _database!;
-// //   }
-// //
-// //   // Initialize the database
-// //   static Future<Database> _initDB() async {
-// //     var directory = await getApplicationDocumentsDirectory();
-// //     String path = join(directory.path, 'gift_manager.db');
-// //     return await openDatabase(path, version: 1, onCreate: _createDB);
-// //   }
-// //
-// //   // Create tables
-// //   static Future<void> _createDB(Database db, int version) async {
-// //     await db.execute('''
-// //       CREATE TABLE Users(
-// //         id INTEGER PRIMARY KEY AUTOINCREMENT,
-// //         name TEXT,
-// //         email TEXT,
-// //         preferences TEXT
-// //       )
-// //     ''');
-// //
-// //     await db.execute('''
-// //       CREATE TABLE Events(
-// //         id INTEGER PRIMARY KEY AUTOINCREMENT,
-// //         name TEXT,
-// //         date TEXT,
-// //         location TEXT,
-// //         description TEXT,
-// //         userId INTEGER,
-// //         FOREIGN KEY(userId) REFERENCES Users(id)
-// //       )
-// //     ''');
-// //
-// //     await db.execute('''
-// //       CREATE TABLE Gifts(
-// //         id INTEGER PRIMARY KEY AUTOINCREMENT,
-// //         name TEXT,
-// //         description TEXT,
-// //         category TEXT,
-// //         price REAL,
-// //         status TEXT,
-// //         eventId INTEGER,
-// //         FOREIGN KEY(eventId) REFERENCES Events(id)
-// //       )
-// //     ''');
-// //
-// //     await db.execute('''
-// //       CREATE TABLE Friends(
-// //         userId INTEGER,
-// //         friendId INTEGER,
-// //         PRIMARY KEY(userId, friendId),
-// //         FOREIGN KEY(userId) REFERENCES Users(id),
-// //         FOREIGN KEY(friendId) REFERENCES Users(id)
-// //       )
-// //     ''');
-// //   }
-// //
-// //   // Insert a user
-// //   static Future<int> insertUser(Map<String, dynamic> user) async {
-// //     final db = await database;
-// //     return await db.insert('Users', user);
-// //   }
-// //
-// //   // Insert an event
-// //   static Future<int> insertEvent(Map<String, dynamic> event) async {
-// //     final db = await database;
-// //     return await db.insert('Events', event);
-// //   }
-// //
-// //   // Insert a gift
-// //   static Future<int> insertGift(Map<String, dynamic> gift) async {
-// //     final db = await database;
-// //     return await db.insert('Gifts', gift);
-// //   }
-// //
-// //   // Insert a friend relation
-// //   static Future<int> insertFriend(Map<String, dynamic> friend) async {
-// //     final db = await database;
-// //     return await db.insert('Friends', friend);
-// //   }
-// //
-// //   // Get all users
-// //   static Future<List<Map<String, dynamic>>> getUsers() async {
-// //     final db = await database;
-// //     return await db.query('Users');
-// //   }
-// //
-// //   // Get all events for a user
-// //   static Future<List<Map<String, dynamic>>> getEventsForUser(int userId) async {
-// //     final db = await database;
-// //     return await db.query('Events', where: 'userId = ?', whereArgs: [userId]);
-// //   }
-// //
-// //   // Get all gifts for an event
-// //   static Future<List<Map<String, dynamic>>> getGiftsForEvent(int eventId) async {
-// //     final db = await database;
-// //     return await db.query('Gifts', where: 'eventId = ?', whereArgs: [eventId]);
-// //   }
-// //
-// //   // Get all friends for a user
-// //   static Future<List<Map<String, dynamic>>> getFriendsForUser(int userId) async {
-// //     final db = await database;
-// //     return await db.rawQuery('''
-// //       SELECT u.* FROM Users u
-// //       JOIN Friends f ON u.id = f.friendId
-// //       WHERE f.userId = ?
-// //     ''', [userId]);
-// //   }
-// // }
-// // class User {
-// //   final int? id;
-// //   final String name;
-// //   final String email;
-// //   final String preferences;
-// //
-// //   User({this.id, required this.name, required this.email, required this.preferences});
-// //
-// //   Map<String, dynamic> toMap() {
-// //     return {
-// //       'name': name,
-// //       'email': email,
-// //       'preferences': preferences,
-// //     };
-// //   }
-// //
-// //   static User fromMap(Map<String, dynamic> map) {
-// //     return User(
-// //       id: map['id'],
-// //       name: map['name'],
-// //       email: map['email'],
-// //       preferences: map['preferences'],
-// //     );
-// //   }
-// // }
-// //
-// // class Event {
-// //   final int? id;
-// //   final String name;
-// //   final String date;
-// //   final String location;
-// //   final String description;
-// //   final int userId;
-// //
-// //   Event({this.id, required this.name, required this.date, required this.location, required this.description, required this.userId});
-// //
-// //   Map<String, dynamic> toMap() {
-// //     return {
-// //       'name': name,
-// //       'date': date,
-// //       'location': location,
-// //       'description': description,
-// //       'userId': userId,
-// //     };
-// //   }
-// //
-// //   static Event fromMap(Map<String, dynamic> map) {
-// //     return Event(
-// //       id: map['id'],
-// //       name: map['name'],
-// //       date: map['date'],
-// //       location: map['location'],
-// //       description: map['description'],
-// //       userId: map['userId'],
-// //     );
-// //   }
-// // }
-// //
-// // class Gift {
-// //   final int? id;
-// //   final String name;
-// //   final String description;
-// //   final String category;
-// //   final double price;
-// //   final String status;
-// //   final int eventId;
-// //
-// //   Gift({this.id, required this.name, required this.description, required this.category, required this.price, required this.status, required this.eventId});
-// //
-// //   Map<String, dynamic> toMap() {
-// //     return {
-// //       'name': name,
-// //       'description': description,
-// //       'category': category,
-// //       'price': price,
-// //       'status': status,
-// //       'eventId': eventId,
-// //     };
-// //   }
-// //
-// //   static Gift fromMap(Map<String, dynamic> map) {
-// //     return Gift(
-// //       id: map['id'],
-// //       name: map['name'],
-// //       description: map['description'],
-// //       category: map['category'],
-// //       price: map['price'],
-// //       status: map['status'],
-// //       eventId: map['eventId'],
-// //     );
-// //   }
-// // }
-// //
-// // class Friend {
-// //   final int userId;
-// //   final int friendId;
-// //
-// //   Friend({required this.userId, required this.friendId});
-// //
-// //   Map<String, dynamic> toMap() {
-// //     return {
-// //       'userId': userId,
-// //       'friendId': friendId,
-// //     };
-// //   }
-// //
-// //   static Friend fromMap(Map<String, dynamic> map) {
-// //     return Friend(
-// //       userId: map['userId'],
-// //       friendId: map['friendId'],
-// //     );
-// //   }
-// // }
-// import 'package:path/path.dart';
-// import 'package:sqflite/sqflite.dart';
-//
-// class DatabaseHelper {
-//   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
-//   static Database? _database;
-//
-//   DatabaseHelper._privateConstructor();
-//
-//   Future<Database> get database async {
-//     if (_database != null) return _database!;
-//     _database = await _initDatabase();
-//     return _database!;
-//   }
-//
-//   Future<Database> _initDatabase() async {
-//     String path = join(await getDatabasesPath(), 'events.db');
-//     return await openDatabase(
-//       path,
-//       version: 1,
-//       onCreate: (db, version) {
-//         return db.execute(
-//           '''
-//           CREATE TABLE events (
-//             id INTEGER PRIMARY KEY AUTOINCREMENT,
-//             name TEXT
-//           )
-//           ''',
-//         );
-//       },
-//     );
-//   }
-//
-//   Future<int> insertEvent(String name) async {
-//     Database db = await instance.database;
-//     return await db.insert('events', {'name': name});
-//   }
-//
-//   Future<List<Map<String, dynamic>>> getEvents() async {
-//     Database db = await instance.database;
-//     return await db.query('events');
-//   }
-// }
+import 'dart:async';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
+class Event {
+  final int? id;
+  final String name;
+  final String date;
+  final String location;
+  final String description;
+  final int userId;
+
+  Event({
+    this.id,
+    required this.name,
+    required this.date,
+    required this.location,
+    required this.description,
+    required this.userId,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'date': date,
+      'location': location,
+      'description': description,
+      'userId': userId,
+    };
+  }
+}
+
+class Gift {
+  final int? id;
+  final String name;
+  final String description;
+  final String category;
+  final double price;
+  final String status;
+  final int eventId;
+
+
+  Gift({
+    this.id,
+    required this.name,
+    required this.description,
+    required this.category,
+    required this.price,
+    required this.status,
+    required this.eventId,
+  });
+
+  // Convert a Gift object into a Map for SQLite operations
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'category': category,
+      'price': price,
+      'status': status,
+      'eventId': eventId,
+    };
+  }
+
+  // Convert a Map into a Gift object
+  factory Gift.fromMap(Map<String, dynamic> map) {
+    return Gift(
+      id: map['id'],
+      name: map['name'],
+      description: map['description'],
+      category: map['category'],
+      price: map['price'],
+      status: map['status'],
+      eventId: map['eventId'],
+    );
+  }
+}
+
+
+class DatabaseHelper {
+  static final DatabaseHelper _instance = DatabaseHelper._internal();
+  factory DatabaseHelper() => _instance;
+  DatabaseHelper._internal();
+
+  static Database? _database;
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  Future<Database> _initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'app.db');
+
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE
+          );
+        ''');
+        await db.execute('''
+          CREATE TABLE events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            date TEXT,
+            location TEXT,
+            description TEXT,
+            userId INTEGER,
+            FOREIGN KEY (userId) REFERENCES users (id)
+          );
+        ''');
+        await db.execute('PRAGMA foreign_keys = ON;');  // Enable foreign keys
+      },
+    );
+  }
+
+  // Add method to check and create tables
+  // Add method to check and create tables
+  Future<void> checkAndCreateTables() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT name FROM sqlite_master WHERE type="table" AND name="gifts"');
+    if (result.isEmpty) {
+      // Create the gifts table if it doesn't exist
+      await db.execute('''CREATE TABLE gifts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, category TEXT NOT NULL, price REAL NOT NULL, status TEXT DEFAULT "Available", eventId INTEGER NOT NULL, FOREIGN KEY (eventId) REFERENCES events (id));''');
+    }
+  }
+
+
+
+  Future<bool> doesUserExist(String email) async {
+    final db = await database;
+    final result = await db.query(
+      'users',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    return result.isNotEmpty;
+  }
+
+  // User Table Operations
+  Future<int> insertUser(Map<String, dynamic> user) async {
+    final db = await database;
+    return await db.insert('users', user);
+  }
+
+  Future<List<Map<String, dynamic>>> getUsers() async {
+    final db = await database;
+    return await db.query('users');
+  }
+
+  // Update user
+  Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
+    final db = await database;
+    await db.update(
+      'users',
+      userData,
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+  }
+
+  // Function to get the userId from the local database by email
+  // Future<int?> getUserIdByEmail(String email) async {
+  //   final db = await database;
+  //   final result = await db.query(
+  //     'users',
+  //     where: 'email = ?',
+  //     whereArgs: [email],
+  //   );
+  //
+  //   if (result.isNotEmpty) {
+  //     return result.first['id'] as int?;
+  //   } else {
+  //     return null; // Return null if no user is found
+  //   }
+  // }
+  // Future<int?> getUserIdByEmail(String email) async {
+  //   final db = await database; // Get the SQLite database
+  //   List<Map<String, dynamic>> result = await db.query(
+  //     'users',
+  //     where: 'email = ?',
+  //     whereArgs: [email],
+  //   );
+  //
+  //   if (result.isNotEmpty) {
+  //     return result.first['id']; // Return the correct userId from SQLite
+  //   } else {
+  //     return null;  // Return null if no user is found with the given email
+  //   }
+  // }
+
+  Future<int?> getUserIdByEmail(String email) async {
+    final db = await database;
+    final result = await db.query(
+      'users',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    if (result.isNotEmpty) {
+      return result.first['id'] as int?;
+    }
+    return null;
+  }
+
+
+
+  // Event Table Operations
+  Future<int> insertEvent(Event event) async {
+    final db = await database;
+    return await db.insert('events', event.toMap());
+  }
+
+  Future<List<Event>> getEvents(int userId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'events',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+
+    return List.generate(maps.length, (i) {
+      return Event(
+        id: maps[i]['id'],
+        name: maps[i]['name'],
+        date: maps[i]['date'],
+        location: maps[i]['location'],
+        description: maps[i]['description'],
+        userId: maps[i]['userId'],
+      );
+    });
+  }
+
+  Future<int> updateEvent(Event event) async {
+    final db = await database;
+    return await db.update(
+      'events',
+      event.toMap(),
+      where: 'id = ? AND userId = ?',
+      whereArgs: [event.id, event.userId],
+    );
+  }
+
+  Future<int> deleteEvent(int id, int userId) async {
+    final db = await database;
+    return await db.delete(
+      'events',
+      where: 'id = ? AND userId = ?',
+      whereArgs: [id, userId],
+    );
+  }
+
+  // Insert a gift using the Gift model directly
+  Future<int> insertGift(Gift gift) async {
+    final db = await database;
+    return await db.insert(
+      'gifts',
+      gift.toMap(),
+      // conflictAlgorithm: ConflictAlgorithm.replace,  // Handle conflict
+    );
+  }
+
+  // Retrieve gifts for a specific event
+  Future<List<Gift>> getGifts(int eventId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'gifts',
+      where: 'eventId = ?',
+      whereArgs: [eventId],
+    );
+
+    return List.generate(maps.length, (i) {
+      return Gift.fromMap(maps[i]);
+    });
+  }
+
+// Update a gift
+  Future<int> updateGift(int giftId, Map<String, dynamic> giftData) async {
+    final db = await database;
+    return await db.update(
+      'gifts',
+      giftData,
+      where: 'id = ?',
+      whereArgs: [giftId],
+
+    );
+  }
+
+  // Update the name of a gift
+  Future<int> updateGiftName(int giftId, String newName) async {
+    final db = await database;
+    return await db.update(
+      'gifts',
+      {'name': newName},
+      where: 'id = ?',
+      whereArgs: [giftId],
+    );
+  }
+
+// Delete a gift
+  Future<int> deleteGift(int giftId) async {
+    final db = await database;
+    return await db.delete(
+      'gifts',
+      where: 'id = ?',
+      whereArgs: [giftId],
+    );
+  }
+
+  // Update the status of a gift (e.g., mark it as 'Pledged')
+  Future<int> updateGiftStatus(int giftId, String status) async {
+    final db = await database;
+    return await db.update(
+      'gifts',
+      {'status': status}, // Set the new status
+      where: 'id = ?',
+      whereArgs: [giftId],
+    );
+  }
+
+
+
+  Future<void> close() async {
+    final db = await database;
+    db.close();
+  }
+}
+
+

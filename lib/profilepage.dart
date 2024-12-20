@@ -186,8 +186,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/eventlist_page.dart';
 import 'package:widget_circular_animator/widget_circular_animator.dart';
 
+import 'MyPledgitGifts.dart';
+import 'model/database.dart';
 import 'mygiftpage.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -199,6 +202,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final currentUser = FirebaseAuth.instance.currentUser!;
   String username = "Loading...";
   final List<Map<String, dynamic>> events = [];
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+
 
   @override
   void initState() {
@@ -285,35 +290,35 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _addEvent(BuildContext context) {
-    TextEditingController eventController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Add New Event"),
-          content: TextField(
-            controller: eventController,
-            decoration: const InputDecoration(hintText: "Enter event name"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                if (eventController.text.isNotEmpty) {
-                  setState(() {
-                    events.add({'eventName': eventController.text, 'gifts': []});
-                  });
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text("Add"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _addEvent(BuildContext context) {
+  //   TextEditingController eventController = TextEditingController();
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text("Add New Event"),
+  //         content: TextField(
+  //           controller: eventController,
+  //           decoration: const InputDecoration(hintText: "Enter event name"),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               if (eventController.text.isNotEmpty) {
+  //                 setState(() {
+  //                   events.add({'eventName': eventController.text, 'gifts': []});
+  //                 });
+  //                 Navigator.pop(context);
+  //               }
+  //             },
+  //             child: const Text("Add"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -369,32 +374,54 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: events.isEmpty
-                ? const Center(child: Text("No events added yet."))
-                : ListView.builder(
-              itemCount: events.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  key: ValueKey(events[index]['eventName']),
-                  title: Text(events[index]['eventName']),
-                  subtitle: Text('Gifts: ${events[index]['gifts'].length}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _navigateToGiftsPage(context, events[index]),
-                );
-              },
-            ),
-          ),
+          // const SizedBox(height: 10),
+          // Expanded(
+          //   child: events.isEmpty
+          //       ? const Center(child: Text("No events added yet."))
+          //       : ListView.builder(
+          //     itemCount: events.length,
+          //     itemBuilder: (context, index) {
+          //       return ListTile(
+          //         key: ValueKey(events[index]['eventName']),
+          //         title: Text(events[index]['eventName']),
+          //         subtitle: Text('Gifts: ${events[index]['gifts'].length}'),
+          //         trailing: const Icon(Icons.chevron_right),
+          //         onTap: () => _navigateToGiftsPage(context, events[index]),
+          //       );
+          //     },
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () => _addEvent(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey,
+            child: ListTile(
+              title: const Text("Notification Setting"),
+              // subtitle: Text(notificationSetting),
+              trailing: IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed:() => {},
               ),
-              child: const Text("Add Event"),
             ),
+          ),
+
+          // Padding(
+          //   padding: const EdgeInsets.all(16.0),
+          //   child: ElevatedButton(
+          //     onPressed: () => _addEvent(context),
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: Colors.blueGrey,
+          //     ),
+          //     child: const Text("Add Event"),
+          //   ),
+          // ),
+          ListTile(
+            leading: const Icon(Icons.event),
+            title: const Text("My Pledged Gifts"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyPledgedGiftsPage(userUid: FirebaseAuth.instance.currentUser!.uid)),
+              );
+            },
           ),
         ],
       ),
@@ -403,3 +430,238 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 
+
+
+// import 'package:flutter/material.dart';
+// import 'package:mobile/eventlist_page.dart';
+// import 'package:widget_circular_animator/widget_circular_animator.dart';
+// import 'model/database.dart';
+// import 'mygiftpage.dart';
+//
+// class ProfilePage extends StatefulWidget {
+//   @override
+//   _ProfilePageState createState() => _ProfilePageState();
+// }
+//
+// class _ProfilePageState extends State<ProfilePage> {
+//   final List<Map<String, dynamic>> events = [];
+//   final DatabaseHelper _dbHelper = DatabaseHelper();
+//   String username = "Loading...";
+//   int userId = -1; // Default to -1 until fetched
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _getUserId();
+//   }
+//
+//   void _navigateToGiftsPage(BuildContext context, Map<String, dynamic> event) {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(
+//         builder: (context) => MyGiftsPage(event: event),
+//       ),
+//     ).then((_) {
+//       setState(() {});
+//     });
+//   }
+//
+//   void _navigateToEventListPage(BuildContext context) {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(
+//         builder: (context) => EventListPage(userId: userId),
+//       ),
+//     ).then((_) {
+//       setState(() {});
+//     });
+//   }
+//
+//   // Fetch userId and username from the local database
+//   Future<void> _getUserId() async {
+//     final users = await _dbHelper.getUsers();
+//     if (users.isNotEmpty) {
+//       setState(() {
+//         userId = users[0]['id'];
+//         username = users[0]['name'];
+//       });
+//       _getEvents(userId); // After fetching the user data, get events
+//     }
+//   }
+//
+//   // Fetch events for the user
+//   Future<void> _getEvents(int userId) async {
+//     final eventList = await _dbHelper.getEvents(userId);
+//     setState(() {
+//       events.clear();
+//       for (var event in eventList) {
+//         events.add({
+//           'eventName': event.name,
+//           'gifts': event.description, // Assuming description holds gifts
+//         });
+//       }
+//     });
+//   }
+//
+//   Future<void> _editUsername() async {
+//     TextEditingController usernameController = TextEditingController();
+//
+//     showDialog(
+//       context: context,
+//       builder: (context) {
+//         return AlertDialog(
+//           title: const Text("Edit Username"),
+//           content: TextField(
+//             controller: usernameController,
+//             decoration: const InputDecoration(hintText: "Enter new username"),
+//           ),
+//           actions: [
+//             TextButton(
+//               onPressed: () async {
+//                 String newUsername = usernameController.text.trim();
+//                 if (newUsername.isNotEmpty) {
+//                   try {
+//                     // Update the username in the local database
+//                     await _dbHelper.updateUser(userId, {'name': newUsername});
+//
+//                     setState(() {
+//                       username = newUsername;
+//                     });
+//
+//                     Navigator.pop(context);
+//                   } catch (e) {
+//                     print("Error updating username: $e");
+//                   }
+//                 }
+//               },
+//               child: const Text("Save"),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+//
+//   void _addEvent(BuildContext context) {
+//     TextEditingController eventController = TextEditingController();
+//
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return AlertDialog(
+//           title: const Text("Add New Event"),
+//           content: TextField(
+//             controller: eventController,
+//             decoration: const InputDecoration(hintText: "Enter event name"),
+//           ),
+//           actions: [
+//             TextButton(
+//               onPressed: () {
+//                 if (eventController.text.isNotEmpty) {
+//                   setState(() {
+//                     events.add({'eventName': eventController.text, 'gifts': []});
+//                   });
+//                   Navigator.pop(context);
+//                 }
+//               },
+//               child: const Text("Add"),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("My Profile"),
+//         backgroundColor: Colors.blueGrey,
+//       ),
+//       body: Column(
+//         children: [
+//           const SizedBox(height: 20),
+//           Center(
+//               child: WidgetCircularAnimator(
+//                 outerColor: Colors.deepPurple.shade400,
+//                 innerColor: Colors.blue,
+//                 child: Container(
+//                   decoration: BoxDecoration(
+//                       shape: BoxShape.circle, color: Colors.grey[200]),
+//                   child: Icon(
+//                     Icons.person_outline,
+//                     color: Colors.deepPurple[200],
+//                     size: 60,
+//                   ),
+//                 ),
+//               )),
+//           const SizedBox(height: 10),
+//           Text(
+//             username,
+//             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//           ),
+//           const Divider(thickness: 1, height: 30),
+//           Align(
+//             alignment: Alignment.centerLeft,
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 25.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   const Text(
+//                     'My Details',
+//                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+//                   ),
+//                   const SizedBox(height: 10),
+//                   ListTile(
+//                     title: const Text("Username"),
+//                     subtitle: Text(username),
+//                     trailing: IconButton(
+//                       icon: const Icon(Icons.edit),
+//                       onPressed: _editUsername,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//           const SizedBox(height: 10),
+//           Expanded(
+//             child: events.isEmpty
+//                 ? const Center(child: Text("No events added yet."))
+//                 : ListView.builder(
+//               itemCount: events.length,
+//               itemBuilder: (context, index) {
+//                 return ListTile(
+//                   key: ValueKey(events[index]['eventName']),
+//                   title: Text(events[index]['eventName']),
+//                   subtitle: Text('Gifts: ${events[index]['gifts']}'),
+//                   trailing: const Icon(Icons.chevron_right),
+//                   onTap: () => _navigateToGiftsPage(context, events[index]),
+//                 );
+//               },
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(16.0),
+//             child: ElevatedButton(
+//               onPressed: () => _addEvent(context),
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: Colors.blueGrey,
+//               ),
+//               child: const Text("Add Event"),
+//             ),
+//           ),
+//           ListTile(
+//             leading: const Icon(Icons.event),
+//             title: const Text("Manage Events"),
+//             onTap: () {
+//               _navigateToEventListPage(context);
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
