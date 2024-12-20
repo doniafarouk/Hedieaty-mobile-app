@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'giftdetails_page.dart';
-import 'model/database.dart';
+import '../model/database.dart';
 
 class GiftListPage extends StatefulWidget {
   final int eventId; // The ID of the event to show the gifts for

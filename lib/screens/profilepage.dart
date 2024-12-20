@@ -186,12 +186,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/eventlist_page.dart';
+import 'package:mobile/screens/eventlist_page.dart';
 import 'package:widget_circular_animator/widget_circular_animator.dart';
 
 import 'MyPledgitGifts.dart';
-import 'model/database.dart';
-import 'mygiftpage.dart';
+import '../model/database.dart';
+import '../mygiftpage.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -413,16 +413,16 @@ class _ProfilePageState extends State<ProfilePage> {
           //     child: const Text("Add Event"),
           //   ),
           // ),
-          ListTile(
-            leading: const Icon(Icons.event),
-            title: const Text("My Pledged Gifts"),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyPledgedGiftsPage(userUid: FirebaseAuth.instance.currentUser!.uid)),
-              );
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.event),
+          //   title: const Text("My Pledged Gifts"),
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => MyPledgedGiftsPage(userUid: FirebaseAuth.instance.currentUser!.uid)),
+          //     );
+          //   },
+          // ),
         ],
       ),
     );

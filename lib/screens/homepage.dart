@@ -273,11 +273,11 @@ import 'package:mobile/components/drawer.dart';
 import 'package:mobile/model/UserModel.dart';
 import 'package:mobile/screens/setting.dart';
 import 'package:path/path.dart';
-import '../MyPledgitGifts.dart';
-import '../eventlist_page.dart';
-import '../giftlist_page.dart';
+import 'MyPledgitGifts.dart';
+import 'eventlist_page.dart';
+import 'giftlist_page.dart';
 import '../model/database.dart';
-import '../profilepage.dart';
+import 'profilepage.dart';
 import '../Friends/friendEvents.dart';
 
 class HomePage extends StatefulWidget {

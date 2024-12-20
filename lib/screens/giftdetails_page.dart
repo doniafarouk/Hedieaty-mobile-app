@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'model/database.dart';
+import '../model/database.dart';
 
 class GiftDetailsPage extends StatefulWidget {
   final int? giftId; // Pass null if it's a new gift

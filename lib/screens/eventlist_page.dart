@@ -233,7 +233,7 @@
 
 import 'package:flutter/material.dart';
 import 'giftlist_page.dart';
-import 'model/database.dart';
+import '../model/database.dart';
 
 class EventListPage extends StatefulWidget {
   final int userId;

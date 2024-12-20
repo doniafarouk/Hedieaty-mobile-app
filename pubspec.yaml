@@ -46,6 +46,15 @@ dependencies:
   sqflite: ^2.3.0
   anim_search_bar: ^2.0.3
   flutter_animated_loadingkit: ^0.0.7
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.0.0
+#  firebase_auth_mocks: ^0.3.0
+  flutter_driver:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
 
 
 
